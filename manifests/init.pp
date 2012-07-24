@@ -366,7 +366,7 @@ class vsftpd (
       notify  => $vsftpd::manage_service_autorestart,
       source  => $vsftpd::source_dir,
       recurse => true,
-      purge   => $vsftpd::source_dir_purge,
+      purge   => $vsftpd::bool_source_dir_purge,
       replace => $vsftpd::manage_file_replace,
       audit   => $vsftpd::manage_audit,
     }
