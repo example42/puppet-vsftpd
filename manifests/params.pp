@@ -45,6 +45,7 @@ class vsftpd::params {
   }
 
   $config_file = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/etc/vsftpd.conf',
     default => '/etc/vsftpd/vsftpd.conf',
   }
 
