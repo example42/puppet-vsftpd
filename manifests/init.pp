@@ -191,6 +191,114 @@
 #   This is used by monitor, firewall and puppi (optional) components
 #   Can be defined also by the (top scope) variable $vsftpd_protocol
 #
+# [*anonymous_enable*]
+#   Allow anonymous FTP? (Beware - allowed by default).
+#
+# [*anon_mkdir_write_enable*]
+#   If you want the anonymous FTP user to be able to create new directories. (Default: true).
+#   Requires *anonymous_enable* and *write_enable*
+#
+# [*anon_upload_enable*]
+#   Allow the anonymous FTP user to upload files. (Default: false). This only
+#   has an effect if the above global *write_enable* is activated. Also, you will
+#   obviously need to create a directory writable by the FTP user.
+#
+# [*chroot_local_user*]
+#   Default: false
+#   If set to true, local users will be (by default) placed in a chroot() jail in
+#   their home directory after login.
+#   (Warning! chroot'ing can be very dangerous. If using chroot, make sure that
+#   the user does not have write access to the top level directory within the
+#   chroot)
+#
+# [*chroot_list_enable*]
+#   You may specify an explicit list of local users to chroot() to their home
+#   directory. If *chroot_local_user* is true, then this list becomes a list of
+#   users to NOT chroot().
+#
+# [*chroot_list_file*]
+#   The name of a file containing a list of local users which  will
+#   be  placed in a chroot() jail in their home directory.
+#   Requires *chroot_list_enable* enabled.
+#   If the  option *chroot_local_user* is enabled, then the list file becomes a
+#   list of users to NOT place in a chroot() jail.
+#
+# [*connect_from_port_20*]
+#   Make sure PORT transfer connections originate from port 20 (ftp-data).
+#   Default: true
+#
+# [*data_connection_timeout*]
+#   You may change the default value for timing out a data connection.
+#   Default: 120 seconds.
+#
+# [*deny_email_enable*]
+#   You may specify a file of disallowed anonymous e-mail addresses. Apparently
+#   useful for combatting certain DoS attacks. Default: false
+#   If activated, you may provide a list of anonymous password  e-mail  responses
+#   which  cause login to be denied. By default, the file containing this list is
+#   /etc/vsftpd/banned_emails, but you may override this with the
+#   *banned_email_file* setting.
+#
+# [*banned_email_file*]
+#   Defaults to /etc/vsftpd/banned_emails.
+#
+# [*dirmessage_enable*]
+#   Activate directory messages - messages given to remote users when they
+#   go into a certain directory. (Default: true)
+#
+# [*ftpd_banner*]
+#   You may fully customise the login banner string
+#
+# [*idle_session_timeout*]
+#   You may change the default value for timing out an idle session.
+#   Default: 600 seconds.
+#
+# [*local_enable*]
+#   Allow local users to log in. (Default true)
+#
+# [*local_umask*]
+#   Default umask for local users is 022, as used by most other ftpd's.
+#
+# [*use_localtime*]
+#   If enabled, vsftpd will display directory listings with the time
+#   in your local time zone. The default (false) is to display GMT. The
+#   times returned by the MDTM FTP command are also affected by this
+#   option.
+#
+# [*userlist_enable*]
+#   If enabled, vsftpd will load a list of usernames, from the filename given  by
+#   userlist_file.   If  a  user  tries to log in using a name in this file, they
+#   will be denied before they are asked for a password. This may  be  useful  in
+#   preventing cleartext passwords being transmitted
+#
+# [*userlist_file*]
+#   Default: /etc/vsftpd/user_list
+#
+# [*write_enable*]
+#   Enable any form of FTP write command.  (Default true)
+#
+# [*pam_service_name*]
+#   Default: man page says the default is: ftp.
+#   This string is the name of the PAM service vsftpd will use.
+#   On debian and centos, you have to use vsftpd
+#
+# [*xferlog_enable*]
+#   Activate logging of uploads/downloads. (Default: true)
+#   The target log file can be vsftpd_log_file or xferlog_file.
+#   Destination depends on setting *xferlog_std_format* parameter
+#
+# [*xferlog_std_format*]
+#   Switches between logging into vsftpd_log_file and xferlog_file (using
+#   standard ftpd xferlog format). Note that the default log file location
+#   is /var/log/xferlog in this case.
+#   false writes to vsftpd_log_file, true to xferlog_file. Distro-dependent.
+#
+# [*xferlog_file*]
+#   You may override where the log file goes if you like. The default is distro-dependent.
+#   Depends on *xferlog_enable*=true and *xferlog_std_format*=true
+#   WARNING - changing this filename affects /etc/logrotate.d/vsftpd.log
+
+###############################################################################################
 #
 # == Examples
 #
@@ -205,46 +313,71 @@
 #   Alessandro Franceschi <al@lab42.it/>
 #
 class vsftpd (
-  $my_class            = params_lookup( 'my_class' ),
-  $source              = params_lookup( 'source' ),
-  $source_dir          = params_lookup( 'source_dir' ),
-  $source_dir_purge    = params_lookup( 'source_dir_purge' ),
-  $template            = params_lookup( 'template' ),
-  $service_autorestart = params_lookup( 'service_autorestart' , 'global' ),
-  $options             = params_lookup( 'options' ),
-  $version             = params_lookup( 'version' ),
-  $absent              = params_lookup( 'absent' ),
-  $disable             = params_lookup( 'disable' ),
-  $disableboot         = params_lookup( 'disableboot' ),
-  $monitor             = params_lookup( 'monitor' , 'global' ),
-  $monitor_tool        = params_lookup( 'monitor_tool' , 'global' ),
-  $monitor_target      = params_lookup( 'monitor_target' , 'global' ),
-  $puppi               = params_lookup( 'puppi' , 'global' ),
-  $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
-  $firewall            = params_lookup( 'firewall' , 'global' ),
-  $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
-  $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
-  $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
-  $debug               = params_lookup( 'debug' , 'global' ),
-  $audit_only          = params_lookup( 'audit_only' , 'global' ),
-  $package             = params_lookup( 'package' ),
-  $service             = params_lookup( 'service' ),
-  $service_status      = params_lookup( 'service_status' ),
-  $process             = params_lookup( 'process' ),
-  $process_args        = params_lookup( 'process_args' ),
-  $process_user        = params_lookup( 'process_user' ),
-  $config_dir          = params_lookup( 'config_dir' ),
-  $config_file         = params_lookup( 'config_file' ),
-  $config_file_mode    = params_lookup( 'config_file_mode' ),
-  $config_file_owner   = params_lookup( 'config_file_owner' ),
-  $config_file_group   = params_lookup( 'config_file_group' ),
-  $config_file_init    = params_lookup( 'config_file_init' ),
-  $pid_file            = params_lookup( 'pid_file' ),
-  $data_dir            = params_lookup( 'data_dir' ),
-  $log_dir             = params_lookup( 'log_dir' ),
-  $log_file            = params_lookup( 'log_file' ),
-  $port                = params_lookup( 'port' ),
-  $protocol            = params_lookup( 'protocol' )
+  $my_class                = params_lookup( 'my_class' ),
+  $source                  = params_lookup( 'source' ),
+  $source_dir              = params_lookup( 'source_dir' ),
+  $source_dir_purge        = params_lookup( 'source_dir_purge' ),
+  $template                = params_lookup( 'template' ),
+  $service_autorestart     = params_lookup( 'service_autorestart' , 'global' ),
+  $options                 = params_lookup( 'options' ),
+  $version                 = params_lookup( 'version' ),
+  $absent                  = params_lookup( 'absent' ),
+  $disable                 = params_lookup( 'disable' ),
+  $disableboot             = params_lookup( 'disableboot' ),
+  $monitor                 = params_lookup( 'monitor' , 'global' ),
+  $monitor_tool            = params_lookup( 'monitor_tool' , 'global' ),
+  $monitor_target          = params_lookup( 'monitor_target' , 'global' ),
+  $puppi                   = params_lookup( 'puppi' , 'global' ),
+  $puppi_helper            = params_lookup( 'puppi_helper' , 'global' ),
+  $firewall                = params_lookup( 'firewall' , 'global' ),
+  $firewall_tool           = params_lookup( 'firewall_tool' , 'global' ),
+  $firewall_src            = params_lookup( 'firewall_src' , 'global' ),
+  $firewall_dst            = params_lookup( 'firewall_dst' , 'global' ),
+  $debug                   = params_lookup( 'debug' , 'global' ),
+  $audit_only              = params_lookup( 'audit_only' , 'global' ),
+  $package                 = params_lookup( 'package' ),
+  $service                 = params_lookup( 'service' ),
+  $service_status          = params_lookup( 'service_status' ),
+  $process                 = params_lookup( 'process' ),
+  $process_args            = params_lookup( 'process_args' ),
+  $process_user            = params_lookup( 'process_user' ),
+  $config_dir              = params_lookup( 'config_dir' ),
+  $config_file             = params_lookup( 'config_file' ),
+  $config_file_mode        = params_lookup( 'config_file_mode' ),
+  $config_file_owner       = params_lookup( 'config_file_owner' ),
+  $config_file_group       = params_lookup( 'config_file_group' ),
+  $config_file_init        = params_lookup( 'config_file_init' ),
+  $pid_file                = params_lookup( 'pid_file' ),
+  $data_dir                = params_lookup( 'data_dir' ),
+  $log_dir                 = params_lookup( 'log_dir' ),
+  $log_file                = params_lookup( 'log_file' ),
+  $port                    = params_lookup( 'port' ),
+  $protocol                = params_lookup( 'protocol' ),
+  $anonymous_enable        = params_lookup( 'anonymous_enable' , 'global' ),
+  $anon_mkdir_write_enable = params_lookup( 'anon_mkdir_write_enable' , 'global' ),
+  $anon_upload_enable      = params_lookup( 'anon_upload_enable' , 'global' ),
+  $banned_email_file       = params_lookup( 'banned_email_file' , 'global' ),
+  $chroot_list_enable      = params_lookup( 'chroot_list_enable' , 'global' ),
+  $chroot_list_file        = params_lookup( 'chroot_list_file' , 'global' ),
+  $chroot_list_file_source = params_lookup( 'chroot_list_file_source' , 'global' ),
+  $chroot_local_user       = params_lookup( 'chroot_local_user' , 'global' ),
+  $connect_from_port_20    = params_lookup( 'connect_from_port_20' , 'global' ),
+  $data_connection_timeout = params_lookup( 'data_connection_timeout' , 'global' ),
+  $deny_email_enable       = params_lookup( 'deny_email_enable' , 'global' ),
+  $dirmessage_enable       = params_lookup( 'dirmessage_enable' , 'global' ),
+  $ftpd_banner             = params_lookup( 'ftpd_banner' , 'global' ),
+  $pam_service_name        = params_lookup( 'pam_service_name' , 'global' ),
+  $idle_session_timeout    = params_lookup( 'idle_session_timeout' , 'global' ),
+  $local_enable            = params_lookup( 'local_enable' , 'global' ),
+  $local_umask             = params_lookup( 'local_umask' , 'global' ),
+  $use_localtime           = params_lookup( 'use_localtime' , 'global' ),
+  $userlist_enable         = params_lookup( 'userlist_enable' , 'global' ),
+  $userlist_file           = params_lookup( 'userlist_file' , 'global' ),
+  $userlist_file_source    = params_lookup( 'userlist_file_source' , 'global' ),
+  $write_enable            = params_lookup( 'write_enable' , 'global' ),
+  $xferlog_enable          = params_lookup( 'xferlog_enable' , 'global' ),
+  $xferlog_std_format      = params_lookup( 'xferlog_std_format' , 'global' ),
+  $xferlog_file            = params_lookup( 'xferlog_file' , 'global' )
   ) inherits vsftpd::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -257,6 +390,93 @@ class vsftpd (
   $bool_firewall=any2bool($firewall)
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
+
+  $bool_anonymous_enable=any2bool($anonymous_enable)
+  $bool_anon_mkdir_write_enable=any2bool($anon_mkdir_write_enable)
+  $bool_anon_upload_enable=any2bool($anon_upload_enable)
+  $bool_chroot_list_enable=any2bool($chroot_list_enable)
+  $bool_chroot_local_user=any2bool($chroot_local_user)
+  $bool_connect_from_port_20=any2bool($connect_from_port_20)
+  $bool_deny_email_enable=any2bool($deny_email_enable)
+  $bool_dirmessage_enable=any2bool($dirmessage_enable)
+  $bool_local_enable=any2bool($local_enable)
+  $bool_use_localtime=any2bool($use_localtime)
+  $bool_userlist_enable=any2bool($userlist_enable)
+  $bool_write_enable=any2bool($write_enable)
+  $bool_xferlog_enable=any2bool($xferlog_enable)
+  $bool_xferlog_std_format=any2bool($xferlog_std_format)
+
+  # Template files variables
+
+  $real_anonymous_enable = $vsftpd::bool_anonymous_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_anon_mkdir_write_enable = $vsftpd::bool_anon_mkdir_write_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_anon_upload_enable = $vsftpd::bool_anon_upload_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_chroot_list_enable = $vsftpd::bool_chroot_list_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_chroot_local_user = $vsftpd::bool_chroot_local_user ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_connect_from_port_20 = $vsftpd::bool_connect_from_port_20 ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_deny_email_enable = $vsftpd::bool_deny_email_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_dirmessage_enable = $vsftpd::bool_dirmessage_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_local_enable = $vsftpd::bool_local_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_use_localtime = $vsftpd::bool_use_localtime ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_userlist_enable = $vsftpd::bool_userlist_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_write_enable = $vsftpd::bool_write_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_xferlog_enable = $vsftpd::bool_xferlog_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_xferlog_std_format = $vsftpd::bool_xferlog_std_format ? {
+    true  => 'YES',
+    false => 'NO',
+  }
 
   ### Definition of some variables used in the module
   $manage_package = $vsftpd::bool_absent ? {
@@ -323,6 +543,16 @@ class vsftpd (
     default   => $vsftpd::source,
   }
 
+  $manage_userlist_file_source = $vsftpd::userlist_file_source ? {
+    ''        => undef,
+    default   => $vsftpd::userlist_file_source,
+  }
+
+  $manage_chroot_list_file_source = $vsftpd::chroot_list_file_source ? {
+    ''        => undef,
+    default   => $vsftpd::chroot_list_file_source,
+  }
+
   $manage_file_content = $vsftpd::template ? {
     ''        => undef,
     default   => template($vsftpd::template),
@@ -355,6 +585,36 @@ class vsftpd (
     content => $vsftpd::manage_file_content,
     replace => $vsftpd::manage_file_replace,
     audit   => $vsftpd::manage_audit,
+  }
+
+  if $vsftpd::bool_userlist_enable == true {
+    file { 'userlist_file':
+      ensure  => $vsftpd::manage_file,
+      path    => $vsftpd::userlist_file,
+      mode    => $vsftpd::config_file_mode,
+      owner   => $vsftpd::config_file_owner,
+      group   => $vsftpd::config_file_group,
+      require => Package['vsftpd'],
+      notify  => $vsftpd::manage_service_autorestart,
+      source  => $vsftpd::manage_userlist_file_source,
+      replace => $vsftpd::manage_file_replace,
+      audit   => $vsftpd::manage_audit,
+    }
+  }
+
+  if $vsftpd::bool_chroot_list_enable == true {
+    file { 'chroot_list_file':
+      ensure  => $vsftpd::manage_file,
+      path    => $vsftpd::chroot_list_file,
+      mode    => $vsftpd::config_file_mode,
+      owner   => $vsftpd::config_file_owner,
+      group   => $vsftpd::config_file_group,
+      require => Package['vsftpd'],
+      notify  => $vsftpd::manage_service_autorestart,
+      source  => $vsftpd::manage_chroot_list_file_source,
+      replace => $vsftpd::manage_file_replace,
+      audit   => $vsftpd::manage_audit,
+    }
   }
 
   # The whole vsftpd configuration directory can be recursively overriden
