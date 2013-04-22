@@ -118,7 +118,7 @@ class vsftpd::params {
   $source = ''
   $source_dir = ''
   $source_dir_purge = false
-  $template = 'vsftpd/vsftpd.conf.erb'
+  $template = ''
   $options = ''
   $service_autorestart = true
   $version = 'present'

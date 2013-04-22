@@ -35,6 +35,11 @@
 #   If defined, vsftpd main config file has: content => content("$template")
 #   Note source and template parameters are mutually exclusive: don't use both
 #   Can be defined also by the (top scope) variable $vsftpd_template
+#   By default [*template*] is empty, so the default distribution configuration is
+#   used.
+#   A template is provided (if you want to use it), covering most of the
+#   available parameters for vsftpd.
+#   If you want to use it, set template to 'vsftpd/vsftpd.conf.erb'
 #
 # [*options*]
 #   An hash of custom options to be used in templates for arbitrary settings.
