@@ -20,6 +20,16 @@ For detailed info about the logic and usage patterns of Example42 modules check 
 
         class { 'vsftpd': }
 
+* You can use a template to manage different vsftpd's parameters. By default [*template*] is empty, so the default distribution configuration is used. 
+
+  A template is provided (if you want to use it), covering most of the available parameters. Just set template to 'vsftpd/vsftpd.conf.erb' and check in the params.pp and init.pp files for the available parameters.
+
+        class { 'vsftpd':
+          template         => 'vsftpd/vsftpd.conf.erb',
+          anonymous_enable => false,
+          ftpd_banner      => 'Aloha stranger!',
+        }
+
 * Install a specific version of vsftpd package
 
         class { 'vsftpd':

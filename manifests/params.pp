@@ -46,7 +46,7 @@ class vsftpd::params {
 
   $config_file = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => '/etc/vsftpd.conf',
-    default => '/etc/vsftpd/vsftpd.conf',
+    default                   => '/etc/vsftpd/vsftpd.conf',
   }
 
   $config_file_mode = $::operatingsystem ? {
@@ -78,8 +78,36 @@ class vsftpd::params {
     default => '/var/log/vsftpd',
   }
 
-  $log_file = $::operatingsystem ? {
-    default => '/var/log/vsftpd/vsftpd.log',
+  $anonymous_enable        = true
+  $anon_mkdir_write_enable = true
+  $anon_upload_enable      = false
+  $chroot_list_enable      = true
+  $chroot_list_file        = '/etc/vsftpd/chroot_list'
+  $chroot_list_file_source = 'puppet:///modules/vsftpd/chroot_list'
+  $chroot_local_user       = false
+  $connect_from_port_20    = true
+  $data_connection_timeout = '120'
+  $deny_email_enable       = false
+  $banned_email_file       = '/etc/vsftpd/banned_emails'
+  $dirmessage_enable       = true
+  $ftpd_banner             = "Welcome to ${::fqdn} FTP service."
+  $idle_session_timeout    = '600'
+  $local_enable            = true
+  $local_umask             = '022'
+  $use_localtime           = false
+  $userlist_enable         = true
+  $userlist_file           = '/etc/vsftpd/user_list'
+  $userlist_file_source    = 'puppet:///modules/vsftpd/user_list'
+  $write_enable            = true
+  $pam_service_name        = 'vsftpd'
+  $xferlog_enable          = true
+  $xferlog_std_format      = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => false,
+    default                   => true,
+  }
+  $xferlog_file            = $::operatingsystem ? {
+    /(?i:CentOS)/ => '/var/log/xferlog',
+    default       => '/var/log/vsftpd/vsftpd.log',
   }
 
   $port = '21'
