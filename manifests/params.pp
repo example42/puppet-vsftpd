@@ -106,8 +106,8 @@ class vsftpd::params {
     default                   => true,
   }
   $xferlog_file            = $::operatingsystem ? {
-    /(?i:CentOS)/ => '/var/log/xferlog',
-    default       => '/var/log/vsftpd/vsftpd.log',
+    /(?i:CentOS|Linux|RedHat)/ => '/var/log/xferlog',
+    default                    => '/var/log/vsftpd/vsftpd.log',
   }
 
   $port = '21'
