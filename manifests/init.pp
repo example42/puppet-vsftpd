@@ -189,13 +189,13 @@
 # If enabled, vsftpd will run in standalone mode. This means that vsftpd must
 # not be run from an inetd of some kind. Instead, the vsftpd executable is
 # run once directly. vsftpd itself will then take care of listening for and
-# handling incoming connections. 
+# handling incoming connections.
 #
 #
 # [*listen_ipv6*]
 # Like the listen parameter, except vsftpd will listen on an IPv6 socket
 # instead of an IPv4 one. This parameter and the listen parameter are
-# mutually exclusive. 
+# mutually exclusive.
 #
 # [*port*]
 #   The listening port, if any, of the service.
@@ -332,7 +332,7 @@
 # settings are effective on a per-user basis. For example, many settings only
 # prior to the user's session being started. Examples of settings which will
 # not affect any behviour on a per-user basis include listen_address,
-# banner_file, max_per_ip, max_clients, xferlog_file, etc. 
+# banner_file, max_per_ip, max_clients, xferlog_file, etc.
 #
 # [*local_root*]
 # This option represents a directory which vsftpd will try to change into after
@@ -343,16 +343,16 @@
 # connections will be fed through tcp_wrappers access control. Furthermore,
 # there is a mechanism for per-IP based configuration. If tcp_wrappers sets the
 # VSFTPD_LOAD_CONF environment variable, then the vsftpd session will try and
-# load the vsftpd configuration file specified in this variable. 
+# load the vsftpd configuration file specified in this variable.
 # [*pasv_max_port*]
 # The maximum port to allocate for PASV style data connections. Can be used to
 # specify a narrow port range to assist firewalling.
-#  Default: 0 (use any port) 
+#  Default: 0 (use any port)
 #
 # [*pasv_min_port*]
 # The minimum port to allocate for PASV style data connections. Can be used to
 # specify a narrow port range to assist firewalling.
-# Default: 0 (use any port) 
+# Default: 0 (use any port)
 #
 # [*user_sub_token*]
 # This option is useful is conjunction with virtual users. It is used to
@@ -368,7 +368,7 @@
 # If enabled, virtual users will use the same privileges as local users. By
 # default, virtual users will use the same privileges as anonymous users,
 # which tends to be more restrictive (especially in terms of write access).
-# Default: NO 
+# Default: NO
 #
 # [*hide_ids*]
 # If enabled, all user and group information in directory listings will be
@@ -380,7 +380,7 @@
 # totally unprivileged. Note that this should be a dedicated user, rather
 # than nobody. The user nobody tends to be used for rather a lot of important
 # things on most machines.
-# Default: nobody 
+# Default: nobody
 #
 # [*secure_chroot_dir*]
 # This option should be the name of a directory which is empty. Also, the
@@ -390,7 +390,7 @@
 #
 # [*log_ftp_protocol*]
 # When enabled, all FTP requests and responses are logged, providing the
-# option xferlog_std_format is not enabled. Useful for debugging. 
+# option xferlog_std_format is not enabled. Useful for debugging.
 #
 ###############################################################################################
 #
@@ -466,7 +466,7 @@ class vsftpd (
   $idle_session_timeout    = params_lookup( 'idle_session_timeout' , 'global' ),
   $local_enable            = params_lookup( 'local_enable' , 'global' ),
   $local_umask             = params_lookup( 'local_umask' , 'global' ),
-  $tcp_wrappers            = params_lookup( 'tcp_wrappers' , 'global' ), 
+  $tcp_wrappers            = params_lookup( 'tcp_wrappers' , 'global' ),
   $use_localtime           = params_lookup( 'use_localtime' , 'global' ),
   $userlist_enable         = params_lookup( 'userlist_enable' , 'global' ),
   $userlist_file           = params_lookup( 'userlist_file' , 'global' ),
@@ -526,8 +526,8 @@ class vsftpd (
   $bool_virtual_use_local_privs=any2bool($virtual_use_local_privs)
   $bool_hide_ids=any2bool($hide_ids)
   $bool_log_ftp_protocol=any2bool($log_ftp_protocol)
- 
- # Template files variables
+
+  # Template files variables
 
   $real_anonymous_enable = $vsftpd::bool_anonymous_enable ? {
     true  => 'YES',
