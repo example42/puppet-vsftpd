@@ -1,5 +1,5 @@
-name 'netmanagers-vsftpd'
-version '2.0.7'
+name 'example42-vsftpd'
+version '2.0.9'
 
 author 'Alessandro Franceschi'
 license 'Apache2'

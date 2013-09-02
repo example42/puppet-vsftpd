@@ -185,6 +185,18 @@
 # [*log_file*]
 #   Log file(s). Used by puppi
 #
+# [*listen*]
+# If enabled, vsftpd will run in standalone mode. This means that vsftpd must
+# not be run from an inetd of some kind. Instead, the vsftpd executable is
+# run once directly. vsftpd itself will then take care of listening for and
+# handling incoming connections.
+#
+#
+# [*listen_ipv6*]
+# Like the listen parameter, except vsftpd will listen on an IPv6 socket
+# instead of an IPv4 one. This parameter and the listen parameter are
+# mutually exclusive.
+#
 # [*port*]
 #   The listening port, if any, of the service.
 #   This is used by monitor, firewall and puppi (optional) components
@@ -302,7 +314,84 @@
 #   You may override where the log file goes if you like. The default is distro-dependent.
 #   Depends on *xferlog_enable*=true and *xferlog_std_format*=true
 #   WARNING - changing this filename affects /etc/logrotate.d/vsftpd.log
-
+#
+# [*guest_enable*]
+#   If enabled, all non-anonymous logins are classed as "guest" logins.
+#   A guest login is remapped to the user specified in the guest_username setting.
+#
+# [*guest_username*]
+# This is the user to which logins are remapped when using guest_enable
+#
+# [*user_config_dir*]
+# This powerful option allows the override of any config option specified in
+# the manual page, on a per-user basis. Usage is simple, and is best illustrated
+# with an example. If you set user_config_dir to be /etc/vsftpd_user_conf and
+# then log on as the user "chris", then vsftpd will apply the settings in the
+# file /etc/vsftpd_user_conf/chris for the duration of the session. The format
+# of this file is as detailed in this manual page! PLEASE NOTE that not all
+# settings are effective on a per-user basis. For example, many settings only
+# prior to the user's session being started. Examples of settings which will
+# not affect any behviour on a per-user basis include listen_address,
+# banner_file, max_per_ip, max_clients, xferlog_file, etc.
+#
+# [*local_root*]
+# This option represents a directory which vsftpd will try to change into after
+# a local (i.e. non-anonymous) login. Failure is silently ignored.
+#
+# [*tcp_wrappers*]
+# If enabled, and vsftpd was compiled with tcp_wrappers support, incoming
+# connections will be fed through tcp_wrappers access control. Furthermore,
+# there is a mechanism for per-IP based configuration. If tcp_wrappers sets the
+# VSFTPD_LOAD_CONF environment variable, then the vsftpd session will try and
+# load the vsftpd configuration file specified in this variable.
+# [*pasv_max_port*]
+# The maximum port to allocate for PASV style data connections. Can be used to
+# specify a narrow port range to assist firewalling.
+#  Default: 0 (use any port)
+#
+# [*pasv_min_port*]
+# The minimum port to allocate for PASV style data connections. Can be used to
+# specify a narrow port range to assist firewalling.
+# Default: 0 (use any port)
+#
+# [*user_sub_token*]
+# This option is useful is conjunction with virtual users. It is used to
+# automatically generate a home directory for each virtual user, based on a
+# template. For example, if the home directory of the real user specified via
+# guest_username is /home/virtual/$USER, and user_sub_token is set to $USER,
+# then when virtual user fred logs in, he will end up (usually chroot()'ed)
+# in the directory /home/virtual/fred. This option also takes affect if
+# local_root contains user_sub_token.
+# Default: (none)
+#
+# [*virtual_use_local_privs*]
+# If enabled, virtual users will use the same privileges as local users. By
+# default, virtual users will use the same privileges as anonymous users,
+# which tends to be more restrictive (especially in terms of write access).
+# Default: NO
+#
+# [*hide_ids*]
+# If enabled, all user and group information in directory listings will be
+# displayed as "ftp".
+# Default: NO
+#
+# [*nopriv_user*]
+# This is the name of the user that is used by vsftpd when it wants to be
+# totally unprivileged. Note that this should be a dedicated user, rather
+# than nobody. The user nobody tends to be used for rather a lot of important
+# things on most machines.
+# Default: nobody
+#
+# [*secure_chroot_dir*]
+# This option should be the name of a directory which is empty. Also, the
+# directory should not be writable by the ftp user. This directory is used as
+# a secure chroot() jail at times vsftpd does not require filesystem access.
+# Default: /usr/share/empty
+#
+# [*log_ftp_protocol*]
+# When enabled, all FTP requests and responses are logged, providing the
+# option xferlog_std_format is not enabled. Useful for debugging.
+#
 ###############################################################################################
 #
 # == Examples
@@ -354,6 +443,8 @@ class vsftpd (
   $config_file_init        = params_lookup( 'config_file_init' ),
   $pid_file                = params_lookup( 'pid_file' ),
   $data_dir                = params_lookup( 'data_dir' ),
+  $listen                  = params_lookup( 'listen' ),
+  $listen_ipv6             = params_lookup( 'listen_ipv6' ),
   $log_dir                 = params_lookup( 'log_dir' ),
   $log_file                = params_lookup( 'log_file' ),
   $port                    = params_lookup( 'port' ),
@@ -375,6 +466,7 @@ class vsftpd (
   $idle_session_timeout    = params_lookup( 'idle_session_timeout' , 'global' ),
   $local_enable            = params_lookup( 'local_enable' , 'global' ),
   $local_umask             = params_lookup( 'local_umask' , 'global' ),
+  $tcp_wrappers            = params_lookup( 'tcp_wrappers' , 'global' ),
   $use_localtime           = params_lookup( 'use_localtime' , 'global' ),
   $userlist_enable         = params_lookup( 'userlist_enable' , 'global' ),
   $userlist_file           = params_lookup( 'userlist_file' , 'global' ),
@@ -382,7 +474,20 @@ class vsftpd (
   $write_enable            = params_lookup( 'write_enable' , 'global' ),
   $xferlog_enable          = params_lookup( 'xferlog_enable' , 'global' ),
   $xferlog_std_format      = params_lookup( 'xferlog_std_format' , 'global' ),
-  $xferlog_file            = params_lookup( 'xferlog_file' , 'global' )
+  $xferlog_file            = params_lookup( 'xferlog_file' , 'global' ),
+  $guest_enable            = params_lookup( 'guest_enable' , 'global' ),
+  $guest_username          = params_lookup( 'guest_username' , 'global' ),
+  $user_config_dir         = params_lookup( 'user_config_dir' , 'global' ),
+  $local_root              = params_lookup( 'local_root' , 'global' ),
+  $pasv_max_port           = params_lookup( 'pasv_max_port' , 'global' ),
+  $pasv_min_port           = params_lookup( 'pasv_min_port' , 'global' ),
+  $user_sub_token          = params_lookup( 'user_sub_token' , 'global' ),
+  $virtual_use_local_privs = params_lookup( 'virtual_use_local_privs' , 'global' ),
+  $hide_ids                = params_lookup( 'hide_ids' , 'global' ),
+  $nopriv_user             = params_lookup( 'nopriv_user' , 'global' ),
+  $secure_chroot_dir       = params_lookup( 'secure_chroot_dir' , 'global' ),
+  $log_ftp_protocol        = params_lookup( 'log_ftp_protocol' , 'global' ),
+
   ) inherits vsftpd::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -404,12 +509,23 @@ class vsftpd (
   $bool_connect_from_port_20=any2bool($connect_from_port_20)
   $bool_deny_email_enable=any2bool($deny_email_enable)
   $bool_dirmessage_enable=any2bool($dirmessage_enable)
+  $bool_listen=any2bool($listen)
+  if $bool_listen {
+    $bool_listen_ipv6=false
+  } else {
+    $bool_listen_ipv6=any2bool($listen_ipv6)
+  }
   $bool_local_enable=any2bool($local_enable)
+  $bool_tcp_wrappers=any2bool($tcp_wrappers)
   $bool_use_localtime=any2bool($use_localtime)
   $bool_userlist_enable=any2bool($userlist_enable)
   $bool_write_enable=any2bool($write_enable)
   $bool_xferlog_enable=any2bool($xferlog_enable)
   $bool_xferlog_std_format=any2bool($xferlog_std_format)
+  $bool_guest_enable=any2bool($guest_enable)
+  $bool_virtual_use_local_privs=any2bool($virtual_use_local_privs)
+  $bool_hide_ids=any2bool($hide_ids)
+  $bool_log_ftp_protocol=any2bool($log_ftp_protocol)
 
   # Template files variables
 
@@ -453,7 +569,22 @@ class vsftpd (
     false => 'NO',
   }
 
+  $real_listen = $vsftpd::bool_listen ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_listen_ipv6 = $vsftpd::bool_listen_ipv6 ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
   $real_local_enable = $vsftpd::bool_local_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_tcp_wrappers = $vsftpd::bool_tcp_wrappers ? {
     true  => 'YES',
     false => 'NO',
   }
@@ -479,6 +610,26 @@ class vsftpd (
   }
 
   $real_xferlog_std_format = $vsftpd::bool_xferlog_std_format ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_guest_enable = $vsftpd::bool_guest_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_virtual_use_local_privs = $vsftpd::bool_virtual_use_local_privs ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_hide_ids = $vsftpd::bool_hide_ids ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_log_ftp_protocol = $vsftpd::bool_log_ftp_protocol ? {
     true  => 'YES',
     false => 'NO',
   }
