@@ -178,7 +178,7 @@ pasv_min_port=<%= scope.lookupvar('vsftpd::pasv_min_port') %>
 # local_root contains user_sub_token.
 # Default: (none) 
 <% if scope.lookupvar('vsftpd::user_sub_token') -%>
-pasv_min_port=<%= scope.lookupvar('vsftpd::user_sub_token') %>
+user_sub_token=<%= scope.lookupvar('vsftpd::user_sub_token') %>
 <% else -%>
 #user_sub_token=''
 <% end-%>
