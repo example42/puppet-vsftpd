@@ -4,7 +4,7 @@ describe 'vsftpd' do
 
   let(:title) { 'vsftpd' }
   let(:node) { 'rspec.example42.com' }
-  let(:facts) { { :ipaddress => '10.42.42.42' } }
+  let(:facts) { { :ipaddress => '10.42.42.42' , :monitor_tool => 'puppi' } }
 
   describe 'Test standard installation' do
     it { should contain_package('vsftpd').with_ensure('present') }
@@ -185,7 +185,7 @@ describe 'vsftpd' do
 
   describe 'Test params lookup' do
     let(:facts) { { :monitor => true , :ipaddress => '10.42.42.42' } }
-    let(:params) { { :port => '42' } }
+    let(:params) { { :port => '42' , :monitor_tool => 'puppi' } }
 
     it 'should honour top scope global vars' do
       content = catalogue.resource('monitor::process', 'vsftpd_process').send(:parameters)[:enable]
@@ -195,7 +195,7 @@ describe 'vsftpd' do
 
   describe 'Test params lookup' do
     let(:facts) { { :vsftpd_monitor => true , :ipaddress => '10.42.42.42' } }
-    let(:params) { { :port => '42' } }
+    let(:params) { { :port => '42' , :monitor_tool => 'puppi' } }
 
     it 'should honour module specific vars' do
       content = catalogue.resource('monitor::process', 'vsftpd_process').send(:parameters)[:enable]
@@ -205,7 +205,7 @@ describe 'vsftpd' do
 
   describe 'Test params lookup' do
     let(:facts) { { :monitor => false , :vsftpd_monitor => true , :ipaddress => '10.42.42.42' } }
-    let(:params) { { :port => '42' } }
+    let(:params) { { :port => '42' , :monitor_tool => 'puppi' } }
 
     it 'should honour top scope module specific over global vars' do
       content = catalogue.resource('monitor::process', 'vsftpd_process').send(:parameters)[:enable]
@@ -215,7 +215,7 @@ describe 'vsftpd' do
 
   describe 'Test params lookup' do
     let(:facts) { { :monitor => false , :ipaddress => '10.42.42.42' } }
-    let(:params) { { :monitor => true , :firewall => true, :port => '42' } }
+    let(:params) { { :monitor => true , :firewall => true, :port => '42' , :monitor_tool => 'puppi' } }
 
     it 'should honour passed params over global vars' do
       content = catalogue.resource('monitor::process', 'vsftpd_process').send(:parameters)[:enable]
