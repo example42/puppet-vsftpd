@@ -82,7 +82,10 @@ class vsftpd::params {
   $anon_mkdir_write_enable = true
   $anon_upload_enable      = false
   $chroot_list_enable      = true
-  $chroot_list_file        = '/etc/vsftpd/chroot_list'
+  $chroot_list_file        = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/etc/vsftpd.chroot_list',
+    default                   => '/etc/vsftpd/chroot_list',
+  }
   $chroot_list_file_source = 'puppet:///modules/vsftpd/chroot_list'
   $chroot_local_user       = false
   $connect_from_port_20    = true
