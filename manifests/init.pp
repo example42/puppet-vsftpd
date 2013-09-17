@@ -486,7 +486,7 @@ class vsftpd (
   $hide_ids                = params_lookup( 'hide_ids' , 'global' ),
   $nopriv_user             = params_lookup( 'nopriv_user' , 'global' ),
   $secure_chroot_dir       = params_lookup( 'secure_chroot_dir' , 'global' ),
-  $log_ftp_protocol        = params_lookup( 'log_ftp_protocol' , 'global' ),
+  $log_ftp_protocol        = params_lookup( 'log_ftp_protocol' , 'global' )
 
   ) inherits vsftpd::params {
 

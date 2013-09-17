@@ -14,7 +14,7 @@
 # listens on IPv4 sockets. This directive cannot be used in conjunction
 # with the listen_ipv6 directive.
 
-<% if scope.lookupvar('vsftpd::listen') -%>
+<% if scope.lookupvar('vsftpd::bool_listen') -%>
 listen=<%= scope.lookupvar('vsftpd::real_listen') %>
 <% else -%>
 #listen=YES
@@ -23,7 +23,7 @@ listen=<%= scope.lookupvar('vsftpd::real_listen') %>
 # This directive enables listening on IPv6 sockets. To listen on IPv4 and IPv6
 # sockets, you must run two copies of vsftpd with two configuration files.
 # Make sure, that one of the listen options is commented !!
-<% if scope.lookupvar('vsftpd::listen_ipv6') -%>
+<% if scope.lookupvar('vsftpd::bool_listen_ipv6') -%>
 listen_ipv6=<%= scope.lookupvar('vsftpd::real_listen_ipv6') %>
 <% else -%>
 # listen_ipv6=NO
@@ -106,7 +106,7 @@ chroot_list_file=<%= scope.lookupvar('vsftpd::chroot_list_file') -%>
 
 #If enabled, all non-anonymous logins are classed as "guest" logins. A guest
 # login is remapped to the user specified in the guest_username setting. 
-<% if scope.lookupvar('vsftpd::guest_enable') -%>
+<% if scope.lookupvar('vsftpd::bool_guest_enable') -%>
 guest_enable=<%= scope.lookupvar('vsftpd::real_guest_enable') %>
 
 guest_username=<%= scope.lookupvar('vsftpd::guest_username') %>
@@ -145,7 +145,7 @@ local_root=<%= scope.lookupvar('vsftpd::local_root') %>
 # there is a mechanism for per-IP based configuration. If tcp_wrappers sets
 # the VSFTPD_LOAD_CONF environment variable, then the vsftpd session will try
 # and load the vsftpd configuration file specified in this variable. 
-<% if scope.lookupvar('vsftpd::tcp_wrappers') -%>
+<% if scope.lookupvar('vsftpd::bool_tcp_wrappers') -%>
 tcp_wrappers=<%= scope.lookupvar('vsftpd::real_tcp_wrappers') %>
 <% else -%>
 #tcp_wrappers=NO
@@ -186,7 +186,7 @@ user_sub_token=<%= scope.lookupvar('vsftpd::user_sub_token') %>
 # If enabled, virtual users will use the same privileges as local users. By
 # default, virtual users will use the same privileges as anonymous users,
 # which tends to be more restrictive (especially in terms of write access).
-<% if scope.lookupvar('vsftpd::virtual_use_local_privs') -%>
+<% if scope.lookupvar('vsftpd::bool_virtual_use_local_privs') -%>
 virtual_use_local_privs=<%= scope.lookupvar('vsftpd::real_virtual_use_local_privs') %>
 <% else -%>
 #virtual_use_local_privs=NO
@@ -194,7 +194,7 @@ virtual_use_local_privs=<%= scope.lookupvar('vsftpd::real_virtual_use_local_priv
 #
 # If enabled, all user and group information in directory listings will be
 # displayed as "ftp".
-<% if scope.lookupvar('vsftpd::hide_ids') -%>
+<% if scope.lookupvar('vsftpd::bool_hide_ids') -%>
 hide_ids=<%= scope.lookupvar('vsftpd::real_hide_ids') %>
 <% else -%>
 #hide_ids=NO
