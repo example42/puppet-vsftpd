@@ -91,7 +91,10 @@ class vsftpd::params {
   $connect_from_port_20    = true
   $data_connection_timeout = '120'
   $deny_email_enable       = false
-  $banned_email_file       = '/etc/vsftpd/banned_emails'
+  $banned_email_file       = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/etc/vsftpd.banned_emails',
+    default                   => '/etc/vsftpd/banned_emails',
+  }
   $dirmessage_enable       = true
   $ftpd_banner             = "Welcome to ${::fqdn} FTP service."
   $guest_enable            = false
@@ -113,7 +116,10 @@ class vsftpd::params {
   $use_localtime           = false
   $user_config_dir         = ''
   $userlist_enable         = true
-  $userlist_file           = '/etc/vsftpd/user_list'
+  $userlist_file           = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/etc/vsftpd.user_list',
+    default                   => '/etc/vsftpd/user_list',
+  }
   $userlist_file_source    = 'puppet:///modules/vsftpd/user_list'
   $user_sub_token          = ''
   $virtual_use_local_privs = false
