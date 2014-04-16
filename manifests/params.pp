@@ -37,7 +37,8 @@ class vsftpd::params {
   }
 
   $process_user = $::operatingsystem ? {
-    default => 'vsftpd',
+    /(?i:Debian|Ubuntu|Mint)/ => 'root',
+    default                   => 'vsftpd',
   }
 
   $config_dir = $::operatingsystem ? {
@@ -67,11 +68,13 @@ class vsftpd::params {
   }
 
   $pid_file = $::operatingsystem ? {
-    default => '/var/run/vsftpd.pid',
+    /(?i:Debian|Ubuntu|Mint)/ => '/var/run/vsftpd/vsftpd.pid',
+    default                   => '/var/run/vsftpd.pid',
   }
 
   $data_dir = $::operatingsystem ? {
-    default => '/var/ftp/pub',
+    /(?i:Debian|Ubuntu|Mint)/ => '/srv/ftp',
+    default                   => '/var/ftp/pub',
   }
 
   $log_dir = $::operatingsystem ? {
@@ -111,7 +114,10 @@ class vsftpd::params {
   $pam_service_name        = 'vsftpd'
   $pasv_max_port           = 0
   $pasv_min_port           = 0
-  $secure_chroot_dir       = '/usr/share/empty'
+  $secure_chroot_dir       = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/var/run/vsftpd/empty',
+    default                   => '/usr/share/empty',
+  }
   $tcp_wrappers            = false
   $use_localtime           = false
   $user_config_dir         = ''
@@ -130,6 +136,7 @@ class vsftpd::params {
     default                   => true,
   }
   $xferlog_file            = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/  => '/var/log/vsftpd.log',
     /(?i:CentOS|Linux|RedHat)/ => '/var/log/xferlog',
     default                    => '/var/log/vsftpd/vsftpd.log',
   }
