@@ -140,6 +140,22 @@ class vsftpd::params {
     /(?i:CentOS|Linux|RedHat)/ => '/var/log/xferlog',
     default                    => '/var/log/vsftpd/vsftpd.log',
   }
+  $dual_log_enable         = false
+  $allow_writeable_chroot  = false
+  $ssl_enable              = false
+  $ssl_sslv2               = false
+  $ssl_sslv3               = false
+  $ssl_tlsv1               = true
+  $rsa_cert_file           = '/usr/share/ssl/certs/vsftpd.pem'
+  $rsa_private_key_file    = ''
+  $force_local_data_ssl    = true
+  $force_local_logins_ssl  = true
+  $require_ssl_reuse       = true
+  $ssl_ciphers             = 'DES-CBC3-SHA'
+  $debug_ssl               = false
+  $cmds_allowed            = ''
+  $setproctitle_enable     = false
+  $pasv_promiscuous        = false
 
   $port = '21'
   $protocol = 'tcp'
