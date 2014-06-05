@@ -219,3 +219,145 @@ secure_chroot_dir=<%= scope.lookupvar('vsftpd::secure_chroot_dir') %>
 <% else -%>
 #secure_chroot_dir=/usr/share/empty
 <% end-%>
+
+# If enabled, two log files are generated in parallel, going by default to /var/log/xferlog
+# and /var/log/vsftpd.log. The former is a wu-ftpd style transfer log, parseable by
+# standard tools. The latter is vsftpd's own style log.
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_dual_log_enable') -%>
+dual_log_enable=<%= scope.lookupvar('vsftpd::real_dual_log_enable') %>
+<% else -%>
+#dual_log_enable=NO
+<% end-%>
+
+# If enabled, the chroot of virtual users may be writeable
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_allow_writeable_chroot') -%>
+allow_writeable_chroot=<%= scope.lookupvar('vsftpd::real_allow_writeable_chroot') %>
+<% else -%>
+#allow_writeable_chroot=NO
+<% end-%>
+
+# If enabled, and vsftpd was compiled against OpenSSL, vsftpd will support secure connections
+# via SSL. This applies to the control connection (including login) and also data connections.
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_ssl_enable') -%>
+ssl_enable=<%= scope.lookupvar('vsftpd::real_ssl_enable') %>
+<% else -%>
+#ssl_enable=NO
+<% end-%>
+
+# If enabled, this option will permit SSL v2 protocol connections.
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_ssl_sslv2') -%>
+ssl_sslv2=<%= scope.lookupvar('vsftpd::real_ssl_sslv2') %>
+<% else -%>
+#ssl_sslv2=NO
+<% end-%>
+
+# If enabled, this option will permit SSL v3 protocol connections.
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_ssl_sslv3') -%>
+ssl_sslv3=<%= scope.lookupvar('vsftpd::real_ssl_sslv3') %>
+<% else -%>
+#ssl_sslv3=NO
+<% end-%>
+
+# If enabled, this option will permit TLS v1 protocol connections.
+# Default: YES
+<% if scope.lookupvar('vsftpd::bool_ssl_tlsv1') -%>
+ssl_tlsv1=<%= scope.lookupvar('vsftpd::real_ssl_tlsv1') %>
+<% else -%>
+#ssl_tlsv1=YES
+<% end-%>
+
+# This option specifies the location of the RSA certificate to use for SSL encrypted connections.
+# Default: /usr/share/ssl/certs/vsftpd.pem
+<% if scope.lookupvar('vsftpd::rsa_cert_file') -%>
+rsa_cert_file=<%= scope.lookupvar('vsftpd::rsa_cert_file') %>
+<% else -%>
+#rsa_cert_file=/usr/share/ssl/certs/vsftpd.pem
+<% end-%>
+
+# This option specifies the location of the RSA private key to use for SSL encrypted connections.
+# If this option is not set, the private key is expected to be in the same file as the certificate.
+# Default: (none)
+<% if scope.lookupvar('vsftpd::rsa_private_key_file') -%>
+rsa_private_key_file=<%= scope.lookupvar('vsftpd::rsa_private_key_file') %>
+<% else -%>
+#rsa_private_key_file=
+<% end-%>
+
+# If activated, all non-anonymous logins are forced to use a secure SSL connection in order to 
+# send and receive data on data connections. 
+# Default: YES
+<% if scope.lookupvar('vsftpd::bool_force_local_data_ssl') -%>
+force_local_data_ssl=<%= scope.lookupvar('vsftpd::real_force_local_data_ssl') %>
+<% else -%>
+#force_local_data_ssl=YES
+<% end-%>
+
+# If activated, all non-anonymous logins are forced to use a secure SSL connection in order to 
+# send the password. 
+# Default: YES
+<% if scope.lookupvar('vsftpd::bool_force_local_logins_ssl') -%>
+force_local_logins_ssl=<%= scope.lookupvar('vsftpd::real_force_local_logins_ssl') %>
+<% else -%>
+#force_local_logins_ssl=YES
+<% end-%>
+
+# If set to yes, all SSL data connections are required to exhibit SSL session reuse (which proves that they
+# know the same master secret as the control channel). Although this is a secure default, it may break many
+# FTP clients, so you may want to disable it.
+# Default: YES
+<% if ! scope.lookupvar('vsftpd::bool_require_ssl_reuse') -%>
+require_ssl_reuse=<%= scope.lookupvar('vsftpd::real_require_ssl_reuse') %>
+<% else -%>
+#require_ssl_reuse=YES
+<% end-%>
+
+# This option can be used to select which SSL ciphers vsftpd will allow for encrypted SSL connections.
+# See the ciphers man page for further details. Note that restricting ciphers can be a useful security
+# precaution as it prevents malicious remote parties forcing a cipher which they have found problems with.
+# Default: DES-CBC3-SHA
+<% if scope.lookupvar('vsftpd::ssl_ciphers') -%>
+ssl_ciphers=<%= scope.lookupvar('vsftpd::ssl_ciphers') %>
+<% else -%>
+#ssl_ciphers=DES-CBC3-SHA
+<% end-%>
+
+# If true, OpenSSL connection diagnostics are dumped to the vsftpd log file.
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_debug_ssl') -%>
+debug_ssl=<%= scope.lookupvar('vsftpd::real_debug_ssl') %>
+<% else -%>
+#debug_ssl=NO
+<% end-%>
+
+# This options specifies a comma separated list of allowed FTP commands (post login. USER, PASS and QUIT 
+# and others are always allowed pre-login). Other commands are rejected.
+# Default: (none)
+<% if scope.lookupvar('vsftpd::cmds_allowed') -%>
+cmds_allowed=<%= scope.lookupvar('vsftpd::cmds_allowed') %>
+<% else -%>
+#cmds_allowed=
+<% end-%>
+
+# If enabled, vsftpd will try and show session status information in the system process listing. In other words, the 
+# reported name of the process will change to reflect what a vsftpd session is doing (idle, downloading etc).
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_setproctitle_enable') -%>
+setproctitle_enable=<%= scope.lookupvar('vsftpd::real_setproctitle_enable') %>
+<% else -%>
+#setproctitle_enable=NO
+<% end-%>
+
+# Set to YES if you want to disable the PASV security check that ensures the data connection originates from
+# the same IP address as the control connection. Only enable if you know what you are doing! The only legitimate
+# use for this is in some form of secure tunnelling scheme, or perhaps to facilitate FXP support. 
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_pasv_promiscuous') -%>
+pasv_promiscuous=<%= scope.lookupvar('vsftpd::real_pasv_promiscuous') %>
+<% else -%>
+#pasv_promiscuous=NO
+<% end-%>

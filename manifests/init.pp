@@ -392,6 +392,80 @@
 # When enabled, all FTP requests and responses are logged, providing the
 # option xferlog_std_format is not enabled. Useful for debugging.
 #
+# [*dual_log_enable*]
+# If enabled, two log files are generated in parallel, going by default to /var/log/xferlog
+# and /var/log/vsftpd.log. The former is a wu-ftpd style transfer log, parseable by
+# standard tools. The latter is vsftpd's own style log.
+# Default: NO
+#
+# [*allow_writeable_chroot*]
+# If enabled, the chroot of virtual users may be writeable.
+# Default: NO
+#
+# [*ssl_enable*]
+# If enabled, and vsftpd was compiled against OpenSSL, vsftpd will support secure connections
+# via SSL. This applies to the control connection (including login) and also data connections.
+# Default: NO
+#
+# [*ssl_sslv2*]
+# If enabled, this option will permit SSL v2 protocol connections.
+# Default: NO
+#
+# [*ssl_sslv3*]
+# If enabled, this option will permit SSL v3 protocol connections.
+# Default: NO
+#
+# [*ssl_tlsv1*]
+# If enabled, this option will permit TLS v1 protocol connections.
+# Default: YES
+#
+# [*rsa_cert_file*]
+# This option specifies the location of the RSA certificate to use for SSL encrypted connections.
+# Default: /usr/share/ssl/certs/vsftpd.pem
+#
+# [*rsa_private_key_file*]
+# This option specifies the location of the RSA private key to use for SSL encrypted connections.
+# If this option is not set, the private key is expected to be in the same file as the certificate.
+# Default: (none)
+#
+# [*force_local_data_ssl*]
+# If activated, all non-anonymous logins are forced to use a secure SSL connection in order to
+# send and receive data on data connections.
+# Default: YES
+#
+# [*force_local_logins_ssl*]
+# If activated, all non-anonymous logins are forced to use a secure SSL connection in order to
+# send the password.
+# Default: YES
+#
+# [*ssl_ciphers*]
+# This option can be used to select which SSL ciphers vsftpd will allow for encrypted SSL connections.
+# See the ciphers man page for further details. Note that restricting ciphers can be a useful security
+# precaution as it prevents malicious remote parties forcing a cipher which they have found problems with.
+# Default: DES-CBC3-SHA
+#
+# [*cmds_allowed*]
+# This options specifies a comma separated list of allowed FTP commands (post login. USER, PASS and QUIT
+# and others are always allowed pre-login). Other commands are rejected.
+# Default: (none)
+#
+# [*setproctitle_enable*]
+# If enabled, vsftpd will try and show session status information in the system process listing. In other words, the
+# reported name of the process will change to reflect what a vsftpd session is doing (idle, downloading etc).
+# Default: NO
+#
+# [*pasv_promiscuous*]
+# Set to YES if you want to disable the PASV security check that ensures the data connection originates from
+# the same IP address as the control connection. Only enable if you know what you are doing! The only legitimate
+# use for this is in some form of secure tunnelling scheme, or perhaps to facilitate FXP support.
+# Default: NO
+#
+# [*require_ssl_reuse*]
+# If set to yes, all SSL data connections are required to exhibit SSL session reuse (which proves that they
+# know the same master secret as the control channel). Although this is a secure default, it may break many
+# FTP clients, so you may want to disable it.
+# Default: YES
+#
 ###############################################################################################
 #
 # == Examples
@@ -449,44 +523,60 @@ class vsftpd (
   $log_file                = params_lookup( 'log_file' ),
   $port                    = params_lookup( 'port' ),
   $protocol                = params_lookup( 'protocol' ),
-  $anonymous_enable        = params_lookup( 'anonymous_enable' , 'global' ),
-  $anon_mkdir_write_enable = params_lookup( 'anon_mkdir_write_enable' , 'global' ),
-  $anon_upload_enable      = params_lookup( 'anon_upload_enable' , 'global' ),
-  $banned_email_file       = params_lookup( 'banned_email_file' , 'global' ),
-  $chroot_list_enable      = params_lookup( 'chroot_list_enable' , 'global' ),
-  $chroot_list_file        = params_lookup( 'chroot_list_file' , 'global' ),
-  $chroot_list_file_source = params_lookup( 'chroot_list_file_source' , 'global' ),
-  $chroot_local_user       = params_lookup( 'chroot_local_user' , 'global' ),
-  $connect_from_port_20    = params_lookup( 'connect_from_port_20' , 'global' ),
-  $data_connection_timeout = params_lookup( 'data_connection_timeout' , 'global' ),
-  $deny_email_enable       = params_lookup( 'deny_email_enable' , 'global' ),
-  $dirmessage_enable       = params_lookup( 'dirmessage_enable' , 'global' ),
-  $ftpd_banner             = params_lookup( 'ftpd_banner' , 'global' ),
-  $pam_service_name        = params_lookup( 'pam_service_name' , 'global' ),
-  $idle_session_timeout    = params_lookup( 'idle_session_timeout' , 'global' ),
-  $local_enable            = params_lookup( 'local_enable' , 'global' ),
-  $local_umask             = params_lookup( 'local_umask' , 'global' ),
-  $tcp_wrappers            = params_lookup( 'tcp_wrappers' , 'global' ),
-  $use_localtime           = params_lookup( 'use_localtime' , 'global' ),
-  $userlist_enable         = params_lookup( 'userlist_enable' , 'global' ),
-  $userlist_file           = params_lookup( 'userlist_file' , 'global' ),
-  $userlist_file_source    = params_lookup( 'userlist_file_source' , 'global' ),
-  $write_enable            = params_lookup( 'write_enable' , 'global' ),
-  $xferlog_enable          = params_lookup( 'xferlog_enable' , 'global' ),
-  $xferlog_std_format      = params_lookup( 'xferlog_std_format' , 'global' ),
-  $xferlog_file            = params_lookup( 'xferlog_file' , 'global' ),
-  $guest_enable            = params_lookup( 'guest_enable' , 'global' ),
-  $guest_username          = params_lookup( 'guest_username' , 'global' ),
-  $user_config_dir         = params_lookup( 'user_config_dir' , 'global' ),
-  $local_root              = params_lookup( 'local_root' , 'global' ),
-  $pasv_max_port           = params_lookup( 'pasv_max_port' , 'global' ),
-  $pasv_min_port           = params_lookup( 'pasv_min_port' , 'global' ),
-  $user_sub_token          = params_lookup( 'user_sub_token' , 'global' ),
-  $virtual_use_local_privs = params_lookup( 'virtual_use_local_privs' , 'global' ),
-  $hide_ids                = params_lookup( 'hide_ids' , 'global' ),
-  $nopriv_user             = params_lookup( 'nopriv_user' , 'global' ),
-  $secure_chroot_dir       = params_lookup( 'secure_chroot_dir' , 'global' ),
-  $log_ftp_protocol        = params_lookup( 'log_ftp_protocol' , 'global' )
+  $anonymous_enable        = params_lookup( 'anonymous_enable' ),
+  $anon_mkdir_write_enable = params_lookup( 'anon_mkdir_write_enable' ),
+  $anon_upload_enable      = params_lookup( 'anon_upload_enable' ),
+  $banned_email_file       = params_lookup( 'banned_email_file' ),
+  $chroot_list_enable      = params_lookup( 'chroot_list_enable' ),
+  $chroot_list_file        = params_lookup( 'chroot_list_file' ),
+  $chroot_list_file_source = params_lookup( 'chroot_list_file_source' ),
+  $chroot_local_user       = params_lookup( 'chroot_local_user' ),
+  $connect_from_port_20    = params_lookup( 'connect_from_port_20' ),
+  $data_connection_timeout = params_lookup( 'data_connection_timeout' ),
+  $deny_email_enable       = params_lookup( 'deny_email_enable' ),
+  $dirmessage_enable       = params_lookup( 'dirmessage_enable' ),
+  $ftpd_banner             = params_lookup( 'ftpd_banner' ),
+  $pam_service_name        = params_lookup( 'pam_service_name' ),
+  $idle_session_timeout    = params_lookup( 'idle_session_timeout' ),
+  $local_enable            = params_lookup( 'local_enable' ),
+  $local_umask             = params_lookup( 'local_umask' ),
+  $tcp_wrappers            = params_lookup( 'tcp_wrappers' ),
+  $use_localtime           = params_lookup( 'use_localtime' ),
+  $userlist_enable         = params_lookup( 'userlist_enable' ),
+  $userlist_file           = params_lookup( 'userlist_file' ),
+  $userlist_file_source    = params_lookup( 'userlist_file_source' ),
+  $write_enable            = params_lookup( 'write_enable' ),
+  $xferlog_enable          = params_lookup( 'xferlog_enable' ),
+  $xferlog_std_format      = params_lookup( 'xferlog_std_format' ),
+  $xferlog_file            = params_lookup( 'xferlog_file' ),
+  $guest_enable            = params_lookup( 'guest_enable' ),
+  $guest_username          = params_lookup( 'guest_username' ),
+  $user_config_dir         = params_lookup( 'user_config_dir' ),
+  $local_root              = params_lookup( 'local_root' ),
+  $pasv_max_port           = params_lookup( 'pasv_max_port' ),
+  $pasv_min_port           = params_lookup( 'pasv_min_port' ),
+  $user_sub_token          = params_lookup( 'user_sub_token' ),
+  $virtual_use_local_privs = params_lookup( 'virtual_use_local_privs' ),
+  $hide_ids                = params_lookup( 'hide_ids' ),
+  $nopriv_user             = params_lookup( 'nopriv_user' ),
+  $secure_chroot_dir       = params_lookup( 'secure_chroot_dir' ),
+  $log_ftp_protocol        = params_lookup( 'log_ftp_protocol' ),
+  $dual_log_enable         = params_lookup( 'dual_log_enable' ),
+  $allow_writeable_chroot  = params_lookup( 'allow_writeable_chroot' ),
+  $ssl_enable              = params_lookup( 'ssl_enable' ),
+  $ssl_sslv2               = params_lookup( 'ssl_sslv2' ),
+  $ssl_sslv3               = params_lookup( 'ssl_sslv3' ),
+  $ssl_tlsv1               = params_lookup( 'ssl_tlsv1' ),
+  $rsa_cert_file           = params_lookup( 'rsa_cert_file' ),
+  $rsa_private_key_file    = params_lookup( 'rsa_private_key_file' ),
+  $force_local_data_ssl    = params_lookup( 'force_local_data_ssl' ),
+  $force_local_logins_ssl  = params_lookup( 'force_local_logins_ssl' ),
+  $require_ssl_reuse       = params_lookup( 'require_ssl_reuse' ),
+  $ssl_ciphers             = params_lookup( 'ssl_ciphers' ),
+  $debug_ssl               = params_lookup( 'debug_ssl' ),
+  $cmds_allowed            = params_lookup( 'cmds_allowed' ),
+  $setproctitle_enable     = params_lookup( 'setproctitle_enable' ),
+  $pasv_promiscuous        = params_lookup( 'pasv_promiscuous' ),
 
   ) inherits vsftpd::params {
 
@@ -526,6 +616,19 @@ class vsftpd (
   $bool_virtual_use_local_privs=any2bool($virtual_use_local_privs)
   $bool_hide_ids=any2bool($hide_ids)
   $bool_log_ftp_protocol=any2bool($log_ftp_protocol)
+  $bool_dual_log_enable=any2bool($dual_log_enable)
+  $bool_allow_writeable_chroot=any2bool($allow_writeable_chroot)
+  $bool_ssl_enable=any2bool($ssl_enable)
+  $bool_ssl_sslv2=any2bool($ssl_sslv2)
+  $bool_ssl_sslv3=any2bool($ssl_sslv3)
+  $bool_ssl_tlsv1=any2bool($ssl_tlsv1)
+  $bool_force_local_data_ssl=any2bool($force_local_data_ssl)
+  $bool_force_local_logins_ssl=any2bool($force_local_logins_ssl)
+  $bool_require_ssl_reuse=any2bool($require_ssl_reuse)
+  $bool_debug_ssl=any2bool($debug_ssl)
+  $bool_setproctitle_enable=any2bool($setproctitle_enable)
+  $bool_pasv_promiscuous=any2bool($pasv_promiscuous)
+
 
   # Template files variables
 
@@ -630,6 +733,66 @@ class vsftpd (
   }
 
   $real_log_ftp_protocol = $vsftpd::bool_log_ftp_protocol ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_dual_log_enable = $vsftpd::bool_dual_log_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_allow_writeable_chroot = $vsftpd::bool_allow_writeable_chroot ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_ssl_enable = $vsftpd::bool_ssl_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_ssl_sslv2 = $vsftpd::bool_ssl_sslv2 ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_ssl_sslv3 = $vsftpd::bool_ssl_sslv3 ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_ssl_tlsv1 = $vsftpd::bool_ssl_tlsv1 ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_force_local_data_ssl = $vsftpd::bool_force_local_data_ssl ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_force_local_logins_ssl = $vsftpd::bool_force_local_logins_ssl ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_require_ssl_reuse = $vsftpd::bool_require_ssl_reuse ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_debug_ssl = $vsftpd::bool_debug_ssl ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_setproctitle_enable = $vsftpd::bool_setproctitle_enable ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_pasv_promiscuous = $vsftpd::bool_pasv_promiscuous ? {
     true  => 'YES',
     false => 'NO',
   }
