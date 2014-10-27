@@ -160,6 +160,26 @@ tcp_wrappers=<%= scope.lookupvar('vsftpd::real_tcp_wrappers') %>
 #tcp_wrappers=NO
 <% end-%>
 #
+# Use this option to override the IP address that vsftpd will advertise in response
+# to the PASV command. Provide a numeric IP address, unless pasv_addr_resolve is
+# enabled, in which case you can provide a hostname which will be DNS resolved
+# for you at startup.
+# Default: (none - the address is taken from the incoming connected socket)
+<% if scope.lookupvar('vsftpd::pasv_address') -%>
+pasv_address=<%= scope.lookupvar('vsftpd::pasv_address') %>
+<% else -%>
+#pasv_address=
+<% end-%>
+#
+# Set to YES if you want to use a hostname (as opposed to IP address) in the
+# pasv_address option.
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_pasv_addr_resolve') -%>
+pasv_addr_resolve=<%= scope.lookupvar('vsftpd::real_pasv_addr_resolve') %>
+<% else -%>
+#pasv_addr_resolve=NO
+<% end-%>
+#
 # The maximum port to allocate for PASV style data connections. Can be used
 # to specify a narrow port range to assist firewalling.
 # Default: 0 (use any port)
