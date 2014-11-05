@@ -106,6 +106,7 @@ class vsftpd::params {
   $idle_session_timeout    = '600'
   $listen                  = true
   $listen_ipv6             = false
+  $listen_address          = ''
   $local_enable            = true
   $local_root              = ''
   $local_umask             = '022'

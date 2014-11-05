@@ -28,6 +28,10 @@ listen_ipv6=<%= scope.lookupvar('vsftpd::real_listen_ipv6') %>
 <% else -%>
 # listen_ipv6=NO
 <% end-%>
+<% if scope.lookupvar('vsftpd::listen_address') != '' -%>
+# Listen only on following IP address
+listen_address=<%= scope.lookupvar('vsftpd::listen_address') %>
+<% end-%>
 #
 ftpd_banner=<%= scope.lookupvar('vsftpd::ftpd_banner') %>
 write_enable=<%= scope.lookupvar('vsftpd::real_write_enable') %>
