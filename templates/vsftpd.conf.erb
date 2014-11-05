@@ -75,8 +75,13 @@ chroot_list_file=<%= scope.lookupvar('vsftpd::chroot_list_file') -%>
 # If you want, you can arrange for uploaded anonymous files to be owned by
 # a different user. Note! Using "root" for uploaded files is not
 # recommended!
+<% if scope.lookupvar('vsftpd::bool_chown_uploads') -%>
+chown_uploads=<%= scope.lookupvar('vsftpd::real_chown_uploads') %>
+chown_username=<%= scope.lookupvar('vsftpd::chown_username') %>
+<% else -%>
 #chown_uploads=YES
 #chown_username=whoever
+<% end -%>
 #
 # It is recommended that you define on your system a unique user which the
 # ftp server can use as a totally isolated and unprivileged user.

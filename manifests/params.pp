@@ -91,6 +91,8 @@ class vsftpd::params {
   }
   $chroot_list_file_source = 'puppet:///modules/vsftpd/chroot_list'
   $chroot_local_user       = false
+  $chown_uploads           = false
+  $chown_username          = 'root'
   $connect_from_port_20    = true
   $data_connection_timeout = '120'
   $deny_email_enable       = false
