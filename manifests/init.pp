@@ -197,6 +197,11 @@
 # instead of an IPv4 one. This parameter and the listen parameter are
 # mutually exclusive.
 #
+# [*listen_address*]
+#   If vsftpd is in standalone mode, the default listen address (of all
+#   local interfaces) may be overridden by this setting.
+#   Provide a numeric IP address.
+#
 # [*port*]
 #   The listening port, if any, of the service.
 #   This is used by monitor, firewall and puppi (optional) components
@@ -531,6 +536,7 @@ class vsftpd (
   $data_dir                = params_lookup( 'data_dir' ),
   $listen                  = params_lookup( 'listen' ),
   $listen_ipv6             = params_lookup( 'listen_ipv6' ),
+  $listen_address          = params_lookup( 'listen_address' ),
   $log_dir                 = params_lookup( 'log_dir' ),
   $log_file                = params_lookup( 'log_file' ),
   $port                    = params_lookup( 'port' ),
