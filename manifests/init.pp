@@ -911,12 +911,12 @@ class vsftpd (
   }
 
   service { 'vsftpd':
-    ensure     => $vsftpd::manage_service_ensure,
-    name       => $vsftpd::service,
-    enable     => $vsftpd::manage_service_enable,
-    hasstatus  => $vsftpd::service_status,
-    pattern    => $vsftpd::process,
-    require    => Package['vsftpd'],
+    ensure    => $vsftpd::manage_service_ensure,
+    name      => $vsftpd::service,
+    enable    => $vsftpd::manage_service_enable,
+    hasstatus => $vsftpd::service_status,
+    pattern   => $vsftpd::process,
+    require   => Package['vsftpd'],
   }
 
   file { 'vsftpd.conf':
