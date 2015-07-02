@@ -390,3 +390,12 @@ pasv_promiscuous=<%= scope.lookupvar('vsftpd::real_pasv_promiscuous') %>
 <% else -%>
 #pasv_promiscuous=NO
 <% end-%>
+
+# If set to yes, process is run within a seccomp sandbox and hence is only allowed to make use of a limited set
+# of system calls, such as exit(), sigreturn(), read() and write() to opened file descriptors.
+# Default: YES
+<% if defined?('vsftpd::bool_seccomp_syndbox') -%>
+seccomp_sandbox=<%= scope.lookupvar('vsftpd::real_seccomp_sandbox') %>
+<% else -%>
+#seccomp_sandbox=YES
+<% end-%>

@@ -496,6 +496,11 @@
 # FTP clients, so you may want to disable it.
 # Default: YES
 #
+# [*seccomp_sandbox*]
+# If set to yes, process is run within a seccomp sandbox and hence is only allowed to make use of a limited set
+# of system calls, such as exit(), sigreturn(), read() and write() to opened file descriptors.
+# Default: YES
+#
 ###############################################################################################
 #
 # == Examples
@@ -612,6 +617,7 @@ class vsftpd (
   $cmds_allowed            = params_lookup( 'cmds_allowed' ),
   $setproctitle_enable     = params_lookup( 'setproctitle_enable' ),
   $pasv_promiscuous        = params_lookup( 'pasv_promiscuous' ),
+  $seccomp_sandbox         = params_lookup( 'seccomp_sandbox' ),
 
   ) inherits vsftpd::params {
 
@@ -665,6 +671,7 @@ class vsftpd (
   $bool_debug_ssl=any2bool($debug_ssl)
   $bool_setproctitle_enable=any2bool($setproctitle_enable)
   $bool_pasv_promiscuous=any2bool($pasv_promiscuous)
+  $bool_seccomp_sandbox=any2bool($seccomp_sandbox)
 
 
   # Template files variables
@@ -840,6 +847,11 @@ class vsftpd (
   }
 
   $real_pasv_promiscuous = $vsftpd::bool_pasv_promiscuous ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_seccomp_sandbox = $vsftpd::bool_seccomp_sandbox ? {
     true  => 'YES',
     false => 'NO',
   }

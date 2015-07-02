@@ -159,6 +159,7 @@ class vsftpd::params {
   $cmds_allowed            = ''
   $setproctitle_enable     = false
   $pasv_promiscuous        = false
+  $seccomp_sandbox         = true
 
   $port = '21'
   $protocol = 'tcp'
