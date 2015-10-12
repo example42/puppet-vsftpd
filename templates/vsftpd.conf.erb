@@ -160,6 +160,26 @@ tcp_wrappers=<%= scope.lookupvar('vsftpd::real_tcp_wrappers') %>
 #tcp_wrappers=NO
 <% end-%>
 #
+# Use this option to override the IP address that vsftpd will advertise in response
+# to the PASV command. Provide a numeric IP address, unless pasv_addr_resolve is
+# enabled, in which case you can provide a hostname which will be DNS resolved
+# for you at startup.
+# Default: (none - the address is taken from the incoming connected socket)
+<% if scope.lookupvar('vsftpd::pasv_address') -%>
+pasv_address=<%= scope.lookupvar('vsftpd::pasv_address') %>
+<% else -%>
+#pasv_address=
+<% end-%>
+#
+# Set to YES if you want to use a hostname (as opposed to IP address) in the
+# pasv_address option.
+# Default: NO
+<% if scope.lookupvar('vsftpd::bool_pasv_addr_resolve') -%>
+pasv_addr_resolve=<%= scope.lookupvar('vsftpd::real_pasv_addr_resolve') %>
+<% else -%>
+#pasv_addr_resolve=NO
+<% end-%>
+#
 # The maximum port to allocate for PASV style data connections. Can be used
 # to specify a narrow port range to assist firewalling.
 # Default: 0 (use any port)
@@ -300,7 +320,7 @@ rsa_private_key_file=<%= scope.lookupvar('vsftpd::rsa_private_key_file') %>
 # If activated, all non-anonymous logins are forced to use a secure SSL connection in order to 
 # send and receive data on data connections. 
 # Default: YES
-<% if scope.lookupvar('vsftpd::bool_force_local_data_ssl') -%>
+<% if defined?('vsftpd::bool_force_local_data_ssl') -%>
 force_local_data_ssl=<%= scope.lookupvar('vsftpd::real_force_local_data_ssl') %>
 <% else -%>
 #force_local_data_ssl=YES
@@ -309,7 +329,7 @@ force_local_data_ssl=<%= scope.lookupvar('vsftpd::real_force_local_data_ssl') %>
 # If activated, all non-anonymous logins are forced to use a secure SSL connection in order to 
 # send the password. 
 # Default: YES
-<% if scope.lookupvar('vsftpd::bool_force_local_logins_ssl') -%>
+<% if defined?('vsftpd::bool_force_local_logins_ssl') -%>
 force_local_logins_ssl=<%= scope.lookupvar('vsftpd::real_force_local_logins_ssl') %>
 <% else -%>
 #force_local_logins_ssl=YES
@@ -319,7 +339,7 @@ force_local_logins_ssl=<%= scope.lookupvar('vsftpd::real_force_local_logins_ssl'
 # know the same master secret as the control channel). Although this is a secure default, it may break many
 # FTP clients, so you may want to disable it.
 # Default: YES
-<% if ! scope.lookupvar('vsftpd::bool_require_ssl_reuse') -%>
+<% if defined?('vsftpd::bool_require_ssl_reuse') -%>
 require_ssl_reuse=<%= scope.lookupvar('vsftpd::real_require_ssl_reuse') %>
 <% else -%>
 #require_ssl_reuse=YES
@@ -337,7 +357,7 @@ ssl_ciphers=<%= scope.lookupvar('vsftpd::ssl_ciphers') %>
 
 # If true, OpenSSL connection diagnostics are dumped to the vsftpd log file.
 # Default: NO
-<% if scope.lookupvar('vsftpd::bool_debug_ssl') -%>
+<% if defined?('vsftpd::bool_debug_ssl') -%>
 debug_ssl=<%= scope.lookupvar('vsftpd::real_debug_ssl') %>
 <% else -%>
 #debug_ssl=NO
@@ -369,4 +389,13 @@ setproctitle_enable=<%= scope.lookupvar('vsftpd::real_setproctitle_enable') %>
 pasv_promiscuous=<%= scope.lookupvar('vsftpd::real_pasv_promiscuous') %>
 <% else -%>
 #pasv_promiscuous=NO
+<% end-%>
+
+# If set to yes, process is run within a seccomp sandbox and hence is only allowed to make use of a limited set
+# of system calls, such as exit(), sigreturn(), read() and write() to opened file descriptors.
+# Default: YES
+<% if defined?('vsftpd::bool_seccomp_syndbox') -%>
+seccomp_sandbox=<%= scope.lookupvar('vsftpd::real_seccomp_sandbox') %>
+<% else -%>
+#seccomp_sandbox=YES
 <% end-%>

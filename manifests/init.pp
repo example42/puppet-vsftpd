@@ -361,6 +361,19 @@
 # there is a mechanism for per-IP based configuration. If tcp_wrappers sets the
 # VSFTPD_LOAD_CONF environment variable, then the vsftpd session will try and
 # load the vsftpd configuration file specified in this variable.
+#
+# [*pasv_address*]
+# Use this option to override the IP address that vsftpd will advertise in response
+# to the PASV command. Provide a numeric IP address, unless pasv_addr_resolve is
+# enabled, in which case you can provide a hostname which will be DNS resolved
+# for you at startup.
+# Default: (none - the address is taken from the incoming connected socket)
+#
+# [*pasv_addr_resolve*]
+# Set to YES if you want to use a hostname (as opposed to IP address) in the
+# pasv_address option.
+# Default: NO
+#
 # [*pasv_max_port*]
 # The maximum port to allocate for PASV style data connections. Can be used to
 # specify a narrow port range to assist firewalling.
@@ -483,6 +496,11 @@
 # FTP clients, so you may want to disable it.
 # Default: YES
 #
+# [*seccomp_sandbox*]
+# If set to yes, process is run within a seccomp sandbox and hence is only allowed to make use of a limited set
+# of system calls, such as exit(), sigreturn(), read() and write() to opened file descriptors.
+# Default: YES
+#
 ###############################################################################################
 #
 # == Examples
@@ -573,6 +591,8 @@ class vsftpd (
   $guest_username          = params_lookup( 'guest_username' ),
   $user_config_dir         = params_lookup( 'user_config_dir' ),
   $local_root              = params_lookup( 'local_root' ),
+  $pasv_address            = params_lookup( 'pasv_address' ),
+  $pasv_addr_resolve       = params_lookup( 'pasv_addr_resolve' ),
   $pasv_max_port           = params_lookup( 'pasv_max_port' ),
   $pasv_min_port           = params_lookup( 'pasv_min_port' ),
   $user_sub_token          = params_lookup( 'user_sub_token' ),
@@ -597,6 +617,7 @@ class vsftpd (
   $cmds_allowed            = params_lookup( 'cmds_allowed' ),
   $setproctitle_enable     = params_lookup( 'setproctitle_enable' ),
   $pasv_promiscuous        = params_lookup( 'pasv_promiscuous' ),
+  $seccomp_sandbox         = params_lookup( 'seccomp_sandbox' ),
 
   ) inherits vsftpd::params {
 
@@ -634,6 +655,7 @@ class vsftpd (
   $bool_xferlog_enable=any2bool($xferlog_enable)
   $bool_xferlog_std_format=any2bool($xferlog_std_format)
   $bool_guest_enable=any2bool($guest_enable)
+  $bool_pasv_addr_resolve=any2bool($pasv_addr_resolve)
   $bool_virtual_use_local_privs=any2bool($virtual_use_local_privs)
   $bool_hide_ids=any2bool($hide_ids)
   $bool_log_ftp_protocol=any2bool($log_ftp_protocol)
@@ -649,6 +671,7 @@ class vsftpd (
   $bool_debug_ssl=any2bool($debug_ssl)
   $bool_setproctitle_enable=any2bool($setproctitle_enable)
   $bool_pasv_promiscuous=any2bool($pasv_promiscuous)
+  $bool_seccomp_sandbox=any2bool($seccomp_sandbox)
 
 
   # Template files variables
@@ -748,6 +771,11 @@ class vsftpd (
     false => 'NO',
   }
 
+  $real_pasv_addr_resolve = $vsftpd::bool_pasv_addr_resolve ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
   $real_virtual_use_local_privs = $vsftpd::bool_virtual_use_local_privs ? {
     true  => 'YES',
     false => 'NO',
@@ -819,6 +847,11 @@ class vsftpd (
   }
 
   $real_pasv_promiscuous = $vsftpd::bool_pasv_promiscuous ? {
+    true  => 'YES',
+    false => 'NO',
+  }
+
+  $real_seccomp_sandbox = $vsftpd::bool_seccomp_sandbox ? {
     true  => 'YES',
     false => 'NO',
   }
