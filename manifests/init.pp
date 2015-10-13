@@ -851,6 +851,12 @@ class vsftpd (
     false => 'NO',
   }
 
+  if versioncmp($::vsftpd_installed_version, '3.0') < 1 {
+    $supports_seccomp_sandbox = false
+  } else {
+    $supports_seccomp_sandbox = true
+  }
+
   $real_seccomp_sandbox = $vsftpd::bool_seccomp_sandbox ? {
     true  => 'YES',
     false => 'NO',
