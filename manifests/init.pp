@@ -997,7 +997,7 @@ class vsftpd (
   }
 
   # The whole vsftpd configuration directory can be recursively overriden
-  if $vsftpd::source_dir {
+  if $vsftpd::source_dir and $vsftpd::source_dir != '' {
     file { 'vsftpd.dir':
       ensure  => directory,
       path    => $vsftpd::config_dir,
@@ -1013,7 +1013,7 @@ class vsftpd (
 
 
   ### Include custom class if $my_class is set
-  if $vsftpd::my_class {
+  if $vsftpd::my_class and $vsftpd::my_class != '' {
     include $vsftpd::my_class
   }
 
@@ -1030,7 +1030,7 @@ class vsftpd (
 
 
   ### Service monitoring, if enabled ( monitor => true )
-  if $vsftpd::monitor_tool {
+  if $vsftpd::monitor_tool and $vsftpd::monitor_tool != '' {
     monitor::port { "vsftpd_${vsftpd::protocol}_${vsftpd::port}":
       protocol => $vsftpd::protocol,
       port     => $vsftpd::port,
